@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AOCC Attendance</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- QRCode.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>AOCC Attendance</h1>
+    <!-- QR Code Display -->
+    <div id="qrCode"></div>
+    <form id="attendanceForm">
+      <!-- Department Dropdown -->
+      <label for="department">Department:</label>
+      <select id="department" name="department" required>
+        <option value="">Select Department / اختر القسم</option>
+        <option value="Senior Manager AOCC & AOCC / المدير المناوب لمطارات أبوظبي مركز التحكم بعمليات المطار">
+          Senior Manager AOCC & AOCC / المدير المناوب لمطارات أبوظبي مركز التحكم بعمليات المطار
+        </option>
+        <option value="Terminal Operations / مناوب مبنى المطار">
+          Terminal Operations / مناوب مبنى المطار
+        </option>
+        <option value="Government Affairs and AVSEC / مناوب الشؤون الحكومية وأمن الطيران">
+          Government Affairs and AVSEC / مناوب الشؤون الحكومية وأمن الطيران
+        </option>
+        <option value="National Guards / مناوب الحرس الوطني">
+          National Guards / مناوب الحرس الوطني
+        </option>
+        <option value="State Security Department / ضابط الأمن المناوب">
+          State Security Department / ضابط الأمن المناوب
+        </option>
+        <option value="Immigration / مناوب جوازات المطار">
+          Immigration / مناوب جوازات المطار
+        </option>
+        <option value="Customs / مناوب جمارك المطار">
+          Customs / مناوب جمارك المطار
+        </option>
+        <option value="National Ambulance / الإسعاف الوطني">
+          National Ambulance / الإسعاف الوطني
+        </option>
+        <option value="Operations Control Manager / مدير التحكم بالعمليات">
+          Operations Control Manager / مدير التحكم بالعمليات
+        </option>
+        <option value="Hub Control Centre / مركز التحكم بطيران الاتحاد">
+          Hub Control Centre / مركز التحكم بطيران الاتحاد
+        </option>
+        <option value="Information Technology / النظم والمعلمات لمطارات أبوظبي">
+          Information Technology / النظم والمعلمات لمطارات أبوظبي
+        </option>
+        <option value="Facility Management / إدارة مرافق مطارات أبوظبي">
+          Facility Management / إدارة مرافق مطارات أبوظبي
+        </option>
+        <option value="Serco / سرتكو">
+          Serco / سرتكو
+        </option>
+      </select>
+
+      <!-- Name Input -->
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+
+      <!-- Role Input -->
+      <label for="role">Role:</label>
+      <input type="text" id="role" name="role" required>
+
+      <!-- Initials/Name Input -->
+      <label for="initials">Initials or Name:</label>
+      <input type="text" id="initials" name="initials" required>
+
+      <!-- Submit Button -->
+      <button type="submit">Submit Attendance</button>
+    </form>
+
+    <!-- Fetch Attendance Data Button -->
+    <button id="fetchData">Fetch Attendance Data</button>
+
+    <!-- Display Attendance Data -->
+    <div id="attendanceList"></div>
+
+    <!-- Generate PDF Button -->
+    <button id="generatePDF">Generate PDF</button>
+
+    <!-- Delete Button -->
+    <button id="deleteEntryBtn" class="delete-btn">Delete Entry</button>
+  </div>
+
+  <!-- Popup for Deleting Entries -->
+  <div id="deletePopup" class="popup">
+    <div class="popup-content">
+      <h2>Select an Entry to Delete</h2>
+      <ul id="deleteEntriesList"></ul>
+      <button id="closePopupBtn">Close</button>
+    </div>
+  </div>
+
+  <!-- Include jsPDF and AutoTable libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
