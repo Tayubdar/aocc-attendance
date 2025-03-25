@@ -1,63 +1,60 @@
-const express = require("express");
-const cors = require("cors");
-const { MongoClient } = require("mongodb");
-const app = express();
-const port = 3000;
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const { MongoClient } = require('mongodb');
 
-// Middleware to parse JSON and allow CORS
+const app = express();
+const PORT = process.env.PORT || 4000; // Changed default port
+const MONGODB_URI = process.env.MONGODB_URI;
+
+// Middleware
 app.use(express.json());
 app.use(cors());
 
-// MongoDB connection string (replace with your actual connection string)
-const uri = "mongodb+srv://<tayubdar>:<BonzoADA90*>@cluster0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+// MongoDB Connection
+const client = new MongoClient(MONGODB_URI); // Removed deprecated options
 
-// Connect to MongoDB
-async function connectToDatabase() {
+async function run() {
   try {
     await client.connect();
-    console.log("Connected to MongoDB");
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
+    console.log('Connected to MongoDB');
+    
+    const db = client.db('aocc-attendance');
+    const collection = db.collection('attendance');
+
+    // Routes
+    app.post('/submit-attendance', async (req, res) => {
+      try {
+        await collection.insertOne({
+          ...req.body,
+          timestamp: new Date()
+        });
+        res.send('Attendance submitted!');
+      } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+      }
+    });
+
+    app.get('/get-attendance', async (req, res) => {
+      try {
+        const data = await collection.find().sort({ timestamp: -1 }).toArray();
+        res.json(data);
+      } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+      }
+    });
+
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+
+  } finally {
+    // Ensures the client will close when you finish/error
+    process.on('SIGINT', () => client.close());
   }
 }
-connectToDatabase();
 
-// Route to submit attendance
-app.post("/submit-attendance", async (req, res) => {
-  const { department, name, role, initials, shift, date } = req.body;
-
-  try {
-    const database = client.db("aocc-attendance");
-    const collection = database.collection("attendance");
-
-    // Insert the new entry into the database
-    await collection.insertOne({ department, name, role, initials, shift, date });
-
-    res.send("Attendance submitted successfully!");
-  } catch (error) {
-    console.error("Error submitting attendance:", error);
-    res.status(500).send("Error submitting attendance");
-  }
-});
-
-// Route to fetch all attendance data
-app.get("/get-attendance", async (req, res) => {
-  try {
-    const database = client.db("aocc-attendance");
-    const collection = database.collection("attendance");
-
-    // Fetch all entries from the database
-    const attendanceData = await collection.find({}).toArray();
-
-    res.json(attendanceData);
-  } catch (error) {
-    console.error("Error fetching attendance data:", error);
-    res.status(500).send("Error fetching attendance data");
-  }
-});
-
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+run().catch(console.dir);
